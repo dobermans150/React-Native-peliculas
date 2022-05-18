@@ -1,6 +1,12 @@
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import React, { FC } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Movie } from '../interfaces/movieInterface';
+import { RootStackParams } from '../navigation/Navigation';
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParams, 'HomeScreen'>
 
 interface Props {
     movie: Movie;
@@ -10,12 +16,17 @@ interface Props {
 
 export const MovieCard: FC<Props> = ({ movie, height = 420, width = 300 }) => {
 
-    const { title, poster_path } = movie;
+    const { poster_path } = movie;
 
     const uri = `https://image.tmdb.org/t/p/w500${poster_path}`;
 
+    const navigation = useNavigation<HomeScreenNavigationProp>();
+
     return (
-        <View style={{ height, width, marginHorizontal: 8 }}>
+        <TouchableOpacity
+            onPress={() => navigation.navigate('DetailScreen', movie)}
+            activeOpacity={0.9}
+            style={{ height, width, marginHorizontal: 2, paddingBottom: 20, paddingHorizontal: 7 }}>
 
             <View style={styles.imageContainer}>
                 <Image
@@ -23,7 +34,7 @@ export const MovieCard: FC<Props> = ({ movie, height = 420, width = 300 }) => {
                     style={styles.image}
                 />
             </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 
