@@ -1,28 +1,57 @@
 import { StackScreenProps } from '@react-navigation/stack';
 import React, { FC } from 'react';
-import { Image, StyleSheet, useWindowDimensions, View, ScrollView, Text } from 'react-native';
-import { RootStackParams } from '../navigation/Navigation';
+import { Image, StyleSheet, TouchableOpacity, useWindowDimensions, View, ScrollView, Text, ActivityIndicator } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+
+import { MovieDetails } from '../components/MovieDetails';
+
+import { useMovieDetails } from '../hooks/useMovieDetails';
+
+import { Navigation, RootStackParams } from '../navigation/Navigation';
 
 interface Props extends StackScreenProps<RootStackParams, 'DetailScreen'> { }
 
-export const DetailScreen: FC<Props> = ({ route: { params: movie } }) => {
+export const DetailScreen: FC<Props> = ({ route: { params: movie }, navigation }) => {
 
     const uri = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
     const { height } = useWindowDimensions();
 
+    const { isLoading, cast, movieFull } = useMovieDetails(movie.id);
+
     return (
         <ScrollView>
             <View style={{ ...styles.ImageContainer, height: height * 0.7 }}>
-                <Image
-                    source={{ uri }}
-                    style={styles.PosterImage}
-                />
+                <View style={styles.imageBorder}>
+                    <Image
+                        source={{ uri }}
+                        style={styles.PosterImage}
+                    />
+                </View>
             </View>
 
             <View style={styles.marginContainer}>
                 <Text style={styles.subTitle}>{movie.original_title}</Text>
                 <Text style={styles.title}>{movie.title}</Text>
             </View>
+
+
+            {
+                isLoading
+                    ? <ActivityIndicator size={35} color="grey" style={{ marginTop: 20 }} />
+                    : <MovieDetails movieFull={movieFull!} cast={cast} />
+            }
+
+            {/* Boton para cerrar */}
+
+            <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.pop()}>
+
+                <Icon color="white" name="arrow-back-outline" size={50} />
+            </TouchableOpacity>
+
+
         </ScrollView>
     );
 };
@@ -30,10 +59,6 @@ export const DetailScreen: FC<Props> = ({ route: { params: movie } }) => {
 const styles = StyleSheet.create({
     ImageContainer: {
         width: '100%',
-        borderBottomEndRadius: 25,
-        borderBottomStartRadius: 25,
-        overflow: 'hidden',
-
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -43,6 +68,15 @@ const styles = StyleSheet.create({
         shadowRadius: 7,
 
         elevation: 10,
+
+        borderBottomEndRadius: 25,
+        borderBottomStartRadius: 25,
+    },
+    imageBorder: {
+        flex: 1,
+        overflow: 'hidden',
+        borderBottomEndRadius: 25,
+        borderBottomStartRadius: 25,
     },
     PosterImage: {
         flex: 1,
@@ -58,5 +92,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    backButton: {
+        position: 'absolute',
+        zIndex: 999,
+        elevation: 9,
+        top: 30,
+        left: 5,
     },
 });
