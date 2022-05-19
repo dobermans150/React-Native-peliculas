@@ -17,7 +17,7 @@ LogBox.ignoreLogs(["ViewPropTypes will be removed from React Native. Migrate to 
 
 export const HomeScreen = () => {
 
-    const { setMainColors, setPrevMainColors } = useContext(GradientContext);
+    const { setMainColors } = useContext(GradientContext);
 
     const { nowPlaying, popular, topRated, upComing, isLoading } = useMovies();
 

@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { StatusBar } from 'react-native';
-import { GradientProvider } from './src/context/gradiantContext';
+import { GradientContext, GradientProvider } from './src/context/gradiantContext';
 import { Navigation } from './src/navigation/Navigation';
 
 
@@ -17,13 +17,26 @@ const AppState: FC<AppStateProps> = ({ children }) => {
   );
 };
 
+const CustomStatusBar: FC = () => {
+
+  const { colors } = useContext(GradientContext);
+
+  return (
+    <StatusBar
+      backgroundColor={colors.primary}
+      animated={true}
+      showHideTransition="fade"
+    />
+  );
+};
+
 const App = () => {
   return (
     <NavigationContainer>
       <AppState>
-        <StatusBar
-          hidden={true}
-        />
+
+        <CustomStatusBar />
+
         <Navigation />
         {/* <FadeScreen /> */}
       </AppState>
